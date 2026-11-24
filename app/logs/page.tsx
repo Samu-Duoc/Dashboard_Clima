@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Download, RefreshCw, Search } from "lucide-react";
+import { AlertTriangle, Download, RefreshCw } from "lucide-react";
 import { apiFetch } from "@/src/services/api";
 
 type ExecutionLog = {
@@ -15,9 +15,20 @@ type ExecutionLog = {
 };
 type LogsResponse = { total: number; datos: ExecutionLog[] };
 
+function formatDateTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Sin dato";
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
 export default function LogsPage() {
   const [logs, setLogs] = useState<ExecutionLog[]>([]);
-  const [query, setQuery] = useState("");
   const [status, setStatus] = useState("todos");
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
@@ -31,7 +42,6 @@ export default function LogsPage() {
       params.set("fecha_desde", `${date}T00:00:00Z`);
       params.set("fecha_hasta", `${date}T23:59:59Z`);
     }
-    if (query.trim()) params.set("busqueda", query.trim());
     if (status !== "todos") params.set("estado", status);
     try {
       const response = await apiFetch<LogsResponse>(`/api/logs?${params}`);
@@ -41,7 +51,7 @@ export default function LogsPage() {
     } finally {
       setLoading(false);
     }
-  }, [date, query, status]);
+  }, [date, status]);
 
   useEffect(() => {
     const task = window.setTimeout(() => { void load(); }, 350);
@@ -75,10 +85,9 @@ export default function LogsPage() {
           <button className="secondary-button" onClick={downloadCsv} disabled={!logs.length}><Download size={16} />Descargar</button>
         </div>
       </div>
-      <section className="filter-bar">
-        <label><span>Buscar ID</span><div className="input-with-icon"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ej: ejecucion-2026" /></div></label>
+      <section className="filter-bar logs-filter-bar">
         <label><span>Estado</span><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="todos">Todos</option><option value="completada">OK</option><option value="fallida">Error</option><option value="abandonada">Abandonada</option></select></label>
-        <label><span>Fecha</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label>
+        <label><span>Fecha</span><input type="date" value={date} onChange={(event) => setDate(event.target.value)} aria-label="Filtrar logs por fecha" /></label>
       </section>
       {error && <div className="error-banner"><AlertTriangle size={18} /><div><strong>Error al consultar logs</strong><span>{error}</span></div></div>}
       <article className="panel">
@@ -86,7 +95,7 @@ export default function LogsPage() {
           <div className="table-wrap"><table className="data-table"><thead><tr><th>Fecha y hora</th><th>ID ejecución</th><th>Origen</th><th>Estado</th><th>Duración</th><th>Mensaje</th></tr></thead><tbody>
             {logs.map((log) => (
               <tr key={log.id}>
-                <td>{new Date(log.fecha_inicio).toLocaleString("es-CL")}</td>
+                <td>{formatDateTime(log.fecha_inicio)}</td>
                 <td>{log.clave_ejecucion ?? `#${log.id}`}</td>
                 <td>{log.origen ?? "—"}</td>
                 <td><span className={`table-status ${log.estado?.toLowerCase()}`}>{log.estado}</span></td>

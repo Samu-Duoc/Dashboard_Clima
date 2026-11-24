@@ -113,6 +113,10 @@ export default function ReportsPage() {
   }, []);
 
   async function generateReport() {
+    if (from && to && from > to) {
+      setError("La fecha inicial no puede ser posterior a la fecha final.");
+      return;
+    }
     setLoading(true);
     setError("");
     setMessage("");
@@ -204,8 +208,24 @@ export default function ReportsPage() {
         <article className="panel report-config">
           <div className="panel-heading"><div><span>PERÍODO</span><h2>Datos del reporte</h2></div></div>
           <div className="date-grid">
-            <label><span>Desde</span><input type="date" value={from} max={to} onChange={(event) => setFrom(event.target.value)} /></label>
-            <label><span>Hasta</span><input type="date" value={to} min={from} onChange={(event) => setTo(event.target.value)} /></label>
+            <label>
+              <span>Desde</span>
+              <input
+                type="date"
+                value={from}
+                onChange={(event) => setFrom(event.target.value)}
+                aria-label="Fecha inicial del reporte"
+              />
+            </label>
+            <label>
+              <span>Hasta</span>
+              <input
+                type="date"
+                value={to}
+                onChange={(event) => setTo(event.target.value)}
+                aria-label="Fecha final del reporte"
+              />
+            </label>
           </div>
           <button className="primary-button full-button" onClick={() => void generateReport()} disabled={loading || !from || !to}><Download size={17} />{loading ? "Generando…" : "Generar y descargar Excel"}</button>
         </article>

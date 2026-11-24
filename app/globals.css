@@ -126,8 +126,13 @@ button { cursor: pointer; }
 .error-banner div { display: flex; flex-direction: column; }.error-banner strong { color: #fecaca; }.error-banner span { margin-top: 3px; }
 .info-banner { border: 1px solid rgba(56,189,248,.35); background: rgba(56,189,248,.08); color: #bae6fd; }
 .filter-bar { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+.logs-filter-bar { grid-template-columns: 1fr 1fr; }
+.logs-filter-bar label { min-width: 0; }
+.logs-filter-bar input[type="date"] { appearance:auto; -webkit-appearance:auto; position:relative; z-index:1; cursor:pointer; min-width:0; }
+.app-light .logs-filter-bar input[type="date"] { color-scheme:light; }
 .filter-bar label, .date-grid label { display: flex; flex-direction: column; gap: 7px; color: var(--muted); font-size: 10px; }
 .filter-bar input, .filter-bar select, .date-grid input { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; background: #0c1726; color: var(--text); padding: 0 10px; outline: none; color-scheme: dark; }
+.date-grid input[type="date"] { appearance:auto; -webkit-appearance:auto; position:relative; z-index:1; cursor:pointer; min-width:0; }
 .input-with-icon { position: relative; }.input-with-icon svg { position: absolute; left: 11px; top: 12px; color: var(--muted); }.input-with-icon input { width: 100%; height: 40px; border: 1px solid var(--border); border-radius: 8px; background: #0c1726; color: var(--text); padding: 0 10px 0 36px; outline: none; }
 .missing-panel { min-height: 350px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
 .missing-icon, .preview-icon { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 14px; color: #67d9fb; background: rgba(56,189,248,.11); }
@@ -286,6 +291,7 @@ button { cursor: pointer; }
 .app-light .filter-bar input,
 .app-light .filter-bar select,
 .app-light .date-grid input,
+.app-light .date-grid input[type="date"] { color-scheme:light; }
 .app-light .input-with-icon input,
 .app-light .secondary-button { background:#fff; color:#050505; }
 .app-light .sheet-list span {
